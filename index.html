@@ -31,7 +31,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 @keyframes twinkle{to{transform:scale(1.45) rotate(15deg);opacity:.55}}
 
 .shell{max-width:1540px;margin:-1px auto 0;padding:18px;position:relative;z-index:3}
-.mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.mode-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .mode-btn{border:1px solid #c9def5;background:#fff;color:#315b95;min-height:58px;border-radius:15px;font-weight:1000;font-size:clamp(15px,1.6vw,21px);cursor:pointer;box-shadow:0 7px 20px rgba(34,84,149,.10)}
 .mode-btn.active{color:#fff;border-color:transparent;background:linear-gradient(180deg,#2e82f3,#1768de);box-shadow:0 10px 24px rgba(23,105,223,.24)}
 .mode{display:none}.mode.active{display:block}
@@ -75,7 +75,7 @@ textarea:disabled{background:#f4f7fb}
 .field label{display:block;margin:0 0 6px;font-weight:900;color:#315b95;font-size:14px}
 .field input{width:100%;height:48px;border:2px solid #d6e5f6;border-radius:12px;padding:0 12px;color:#24456e;background:#fff}
 .hint{font-size:13px;color:#7488a6;line-height:1.4;margin-top:6px}
-.team-stage,.pair-stage{min-height:630px}
+.team-stage,.group-stage,.pair-stage{min-height:630px}
 .empty-state{flex:1;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;color:#7890ae;font-size:clamp(18px,2vw,28px);font-weight:900}
 .team-grid{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:4px}
 .team-card{background:linear-gradient(180deg,#ffffff,#f7fbff);border:1px solid #d7e6f7;border-radius:16px;overflow:hidden;box-shadow:0 8px 20px rgba(34,84,149,.09);animation:slide .35s ease}
@@ -99,6 +99,7 @@ textarea:disabled{background:#f4f7fb}
 
 @media(max-width:1100px){.team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pair-list{grid-template-columns:1fr}}
 @media(max-width:960px){
+  .mode-tabs{grid-template-columns:repeat(2,1fr)}
   .hero{min-height:150px}.layout{grid-template-columns:1fr}.control{display:grid;grid-template-columns:1fr 1fr;gap:9px}
   .control textarea,.count,.control .form-row,.control .hint{grid-column:1/-1}.control .btn{margin-top:0}.stage{min-height:600px}
   textarea{height:170px}.results-body{grid-template-columns:repeat(2,minmax(0,1fr))}.board-list{max-height:none}
@@ -107,7 +108,7 @@ textarea:disabled{background:#f4f7fb}
   .mode-tabs{grid-template-columns:1fr}.mode-btn{min-height:50px}.shell{padding:10px}.hero{min-height:128px;padding:16px 10px 20px}.hero h1{font-size:44px}.hero p{font-size:13px}
   .hero-icon{font-size:48px}.hero-icon.left{left:3%;bottom:20px}.hero-icon.right{right:3%;bottom:18px}
   .panel{border-radius:16px}.panel-head{padding:13px 14px;font-size:21px}.control,.board-control{padding:10px}.btn{min-height:54px;font-size:17px}
-  .stage,.team-stage,.pair-stage{min-height:540px}.stage-body{padding:12px}.draw-center{min-height:330px}.ring{width:min(280px,75vw)}
+  .stage,.team-stage,.group-stage,.pair-stage{min-height:540px}.stage-body{padding:12px}.draw-center{min-height:330px}.ring{width:min(280px,75vw)}
   .luck{font-size:22px;padding:15px}.results-body,.team-grid{grid-template-columns:1fr}.form-row,.board-top{grid-template-columns:1fr}.pair-list{grid-template-columns:1fr}
   .match-body{grid-template-columns:1fr 42px 1fr;padding:11px}.vs{width:38px;height:38px;font-size:13px}.side-name{font-size:15px}
 }
@@ -125,6 +126,7 @@ textarea:disabled{background:#f4f7fb}
   <div class="mode-tabs">
     <button class="mode-btn active" data-mode="draw">🎲 BỐC THỨ TỰ</button>
     <button class="mode-btn" data-mode="teams">👥 CHIA ĐỘI</button>
+    <button class="mode-btn" data-mode="groups">🧑‍🏫 CHIA TỔ</button>
     <button class="mode-btn" data-mode="pairs">🤝 GHÉP ĐỘI</button>
   </div>
 
@@ -192,6 +194,35 @@ textarea:disabled{background:#f4f7fb}
           <div class="empty-state" id="teamEmpty">Nhập danh sách, chọn số người/đội rồi bấm “CHIA ĐỘI”.</div>
           <div class="team-grid" id="teamGrid" style="display:none"></div>
           <div class="meta"><span id="teamSummary">CHƯA CHIA ĐỘI</span><span>Random bằng Web Crypto API</span></div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+
+  <section class="mode" id="mode-groups">
+    <div class="layout">
+      <aside class="panel">
+        <div class="panel-head"><span class="ico">🧑‍🏫</span>CHIA TỔ HỌC SINH</div>
+        <div class="control">
+          <textarea id="groupNames" placeholder="Nhập danh sách học sinh, mỗi dòng 1 em..."></textarea>
+          <div class="count" id="groupCount">Tổng số: 0 học sinh</div>
+          <div class="form-row">
+            <div class="field"><label>Số lượng tổ</label><input id="groupNumber" type="number" min="2" max="30" value="4"></div>
+            <div class="field"><label>Phân bố dự kiến</label><input id="groupEstimate" type="text" value="0" readonly></div>
+          </div>
+          <div class="hint">Hệ thống trộn ngẫu nhiên danh sách rồi chia đều học sinh vào số tổ đã chọn. Số học sinh giữa các tổ chênh nhau tối đa 1 em.</div>
+          <button id="makeGroups" class="btn btn-start">🧑‍🏫 &nbsp;CHIA TỔ</button>
+          <button id="remakeGroups" class="btn btn-redraw">↻ &nbsp;CHIA LẠI</button>
+          <button id="clearGroups" class="btn btn-clear">🗑 &nbsp;XÓA KẾT QUẢ</button>
+        </div>
+      </aside>
+      <main class="panel group-stage">
+        <div class="panel-head"><span class="ico">📚</span>KẾT QUẢ CHIA TỔ</div>
+        <div class="stage-body">
+          <div class="empty-state" id="groupEmpty">Nhập danh sách học sinh, chọn số lượng tổ rồi bấm “CHIA TỔ”.</div>
+          <div class="team-grid" id="groupGrid" style="display:none"></div>
+          <div class="meta"><span id="groupSummary">CHƯA CHIA TỔ</span><span>Chia ngẫu nhiên và cân bằng</span></div>
         </div>
       </main>
     </div>
@@ -342,6 +373,44 @@ function renderTeams(){
 function resetTeams(){teamGrid.innerHTML="";teamGrid.style.display="none";teamEmpty.style.display="flex";teamSummary.textContent="CHƯA CHIA ĐỘI"}
 teamNames.addEventListener("input",updateTeamInfo);teamSize.addEventListener("input",updateTeamInfo);makeTeams.addEventListener("click",renderTeams);remakeTeams.addEventListener("click",renderTeams);clearTeams.addEventListener("click",resetTeams);
 
+
+/* CHIA TỔ HỌC SINH */
+var groupNames=$("groupNames"),groupCount=$("groupCount"),groupNumber=$("groupNumber"),groupEstimate=$("groupEstimate"),makeGroups=$("makeGroups"),remakeGroups=$("remakeGroups"),clearGroups=$("clearGroups");
+var groupEmpty=$("groupEmpty"),groupGrid=$("groupGrid"),groupSummary=$("groupSummary");
+function parseGroupNames(){return cleanLines(groupNames.value)}
+function updateGroupInfo(){
+  var n=parseGroupNames().length,k=Math.max(2,parseInt(groupNumber.value,10)||2);
+  if(k>30)k=30;
+  var low=n&&k?Math.floor(n/k):0,high=n&&k?Math.ceil(n/k):0;
+  groupCount.textContent="Tổng số: "+n+" học sinh";
+  groupEstimate.value=n?(low===high?low+" HS/tổ":low+"–"+high+" HS/tổ"):"0";
+}
+function renderGroups(){
+  var list=parseGroupNames(),k=parseInt(groupNumber.value,10)||0;
+  if(list.length<2){alert("Vui lòng nhập ít nhất 2 học sinh.");groupNames.focus();return}
+  if(k<2||k>30){alert("Số lượng tổ phải từ 2 đến 30.");groupNumber.focus();return}
+  if(k>list.length){alert("Số lượng tổ không được lớn hơn số học sinh.");groupNumber.focus();return}
+  var shuffled=shuffle(list),groups=Array.from({length:k},function(){return[]});
+  shuffled.forEach(function(name,i){groups[i%k].push(name)});
+  groupGrid.innerHTML="";
+  groups.forEach(function(members,i){
+    var card=document.createElement("section"),title=document.createElement("div"),ul=document.createElement("ul");
+    card.className="team-card";title.className="team-title";ul.className="team-members";
+    title.textContent="TỔ "+(i+1)+" • "+members.length+" học sinh";
+    members.forEach(function(name){var li=document.createElement("li");li.textContent=name;ul.appendChild(li)});
+    card.append(title,ul);groupGrid.appendChild(card);
+  });
+  groupEmpty.style.display="none";groupGrid.style.display="grid";groupSummary.innerHTML="";
+  var sizes=groups.map(function(g){return g.length}),min=Math.min.apply(null,sizes),max=Math.max.apply(null,sizes);
+  var chip1=document.createElement("span"),chip2=document.createElement("span"),chip3=document.createElement("span");
+  chip1.className=chip2.className=chip3.className="summary-chip";
+  chip1.textContent=shuffled.length+" học sinh";chip2.textContent=k+" tổ";chip3.textContent=min===max?min+" HS/tổ":min+"–"+max+" HS/tổ";
+  groupSummary.append(chip1,chip2,chip3);confetti(35);
+}
+function resetGroups(){groupGrid.innerHTML="";groupGrid.style.display="none";groupEmpty.style.display="flex";groupSummary.textContent="CHƯA CHIA TỔ"}
+groupNames.addEventListener("input",updateGroupInfo);groupNumber.addEventListener("input",updateGroupInfo);
+makeGroups.addEventListener("click",renderGroups);remakeGroups.addEventListener("click",renderGroups);clearGroups.addEventListener("click",resetGroups);
+
 /* GHÉP ĐỘI THEO BẢNG */
 var boardCount=$("boardCount"),buildBoards=$("buildBoards"),boardList=$("boardList"),makePairs=$("makePairs"),remakePairs=$("remakePairs"),clearPairs=$("clearPairs"),pairEmpty=$("pairEmpty"),pairList=$("pairList"),pairSummary=$("pairSummary");
 var boardCache=[];
@@ -420,7 +489,7 @@ function resetPairs(){pairList.innerHTML="";pairList.style.display="none";pairEm
 buildBoards.addEventListener("click",function(){boardCache=collectBoards().map(function(b){return b.teams.join("\n")});rebuildBoards()});
 makePairs.addEventListener("click",generatePairing);remakePairs.addEventListener("click",generatePairing);clearPairs.addEventListener("click",resetPairs);
 
-updateDrawCount();resetDraw();updateTeamInfo();resetTeams();rebuildBoards();resetPairs();
+updateDrawCount();resetDraw();updateTeamInfo();resetTeams();updateGroupInfo();resetGroups();rebuildBoards();resetPairs();
 })();
 </script>
 </body>
